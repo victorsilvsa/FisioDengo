@@ -170,6 +170,16 @@ const REFERENCES_DATA = {
     return this.topics['Homeostase e Feedback'] || Object.values(this.topics)[0];
   },
 
+  // Retorna referência completa do tema (compatibilidade com renderers)
+  getTopicReference(identifier) {
+    return this.getTopic(identifier);
+  },
+
+  // Retorna fonte primária por ID
+  getPrimarySource(sourceId) {
+    return this.primarySources[sourceId] || null;
+  },
+
   // Retorna a lista dos 30 temas únicos ordenados por nível (1 a 30)
   getAllTopicsList() {
     const map = new Map();

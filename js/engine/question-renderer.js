@@ -6,7 +6,7 @@ const QuestionRenderer = {
   matchingState: { selectedLeft: null, matchedPairs: {} },
   orderState: [],
 
-  render(question, index, total, onAnswerSubmit) {
+  render(question, index, total, onAnswerSubmit, targetContainer = 'quiz-view-container') {
     this.currentQuestion = question;
     this.userAnswer = null;
     this.matchingState = { selectedLeft: null, matchedPairs: {} };
@@ -19,7 +19,7 @@ const QuestionRenderer = {
     }
     this.currentPresentation = presentation;
 
-    const container = document.getElementById('quiz-view-container');
+    const container = (typeof targetContainer === 'string' ? document.getElementById(targetContainer) : targetContainer) || document.getElementById('quiz-view-container');
     if (!container) return;
 
     const progressPct = Math.round(((index + 1) / total) * 100);
@@ -89,7 +89,7 @@ const QuestionRenderer = {
     container.innerHTML = html;
 
     // Attach listeners
-    this.attachListeners(question, onAnswerSubmit);
+    this.attachListeners(question, onAnswerSubmit, container);
   },
 
   getTypeIcon(type) {
@@ -200,9 +200,10 @@ const QuestionRenderer = {
     `;
   },
 
-  attachListeners(question, onAnswerSubmit) {
+  attachListeners(question, onAnswerSubmit, rootEl = document) {
+    const root = rootEl || document;
     // Multiple Choice & Cause Effect (attach whenever option buttons exist)
-    const buttons = document.querySelectorAll('.option-btn');
+    const buttons = root.querySelectorAll('.option-btn');
     if (buttons.length > 0) {
       buttons.forEach(btn => {
         btn.addEventListener('click', () => {

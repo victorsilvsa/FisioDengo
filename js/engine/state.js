@@ -166,31 +166,100 @@ class GameStateManager {
     this.save();
   }
 
-  recordAnswer(question, isCorrect) {
+  recordAnswer(question, isCorrect, options = {}) {
+    if (!question || !question.id) return;
     this.data.answeredCount += 1;
+
     if (isCorrect) {
       this.data.correctCount += 1;
-      // Remove from mistakes if present
-      this.data.mistakes = this.data.mistakes.filter(m => m.id !== question.id);
+      // If answered correctly during an explicit Review Session, mark the mistake as resolved!
+      if (options && options.isReview) {
+        this.resolveMistake(question.id);
+      }
     } else {
-      // Record mistake
-      const existing = this.data.mistakes.find(m => m.id === question.id);
+      // Record mistake persistently
+      if (!Array.isArray(this.data.mistakes)) {
+        this.data.mistakes = [];
+      }
+      let existing = this.data.mistakes.find(m => m.id === question.id);
       if (existing) {
         existing.failCount = (existing.failCount || 1) + 1;
-        existing.timestamp = Date.now();
+        existing.resolved = false;
+        existing.lastFailedAt = Date.now();
+        if (options.userAnswer !== undefined) existing.lastUserAnswer = options.userAnswer;
+        if (options.whyWrong) existing.whyWrong = options.whyWrong;
       } else {
         this.data.mistakes.push({
           id: question.id,
-          topic: question.topic,
+          topic: question.topic || 'Geral',
           failCount: 1,
-          timestamp: Date.now(),
-          questionData: question
+          resolved: false,
+          firstFailedAt: Date.now(),
+          lastFailedAt: Date.now(),
+          lastUserAnswer: options.userAnswer,
+          whyWrong: options.whyWrong || '',
+          source: options.source || 'campaign',
+          questionData: {
+            id: question.id,
+            title: question.title,
+            options: question.options,
+            correctIndex: question.correctIndex,
+            explanation: question.explanation,
+            whyWrong: question.whyWrong,
+            tip: question.tip,
+            topic: question.topic,
+            examPrompt: question.examPrompt || null,
+            scenario: question.scenario || null,
+            xp: question.xp || 15
+          }
         });
       }
     }
 
     // Update topic domain
-    this.updateDomain(question.topic, isCorrect);
+    if (question.topic) {
+      this.updateDomain(question.topic, isCorrect);
+    }
+    this.save();
+  }
+
+  resolveMistake(questionId) {
+    if (!Array.isArray(this.data.mistakes)) return;
+    const m = this.data.mistakes.find(item => item.id === questionId);
+    if (m) {
+      m.resolved = true;
+      m.resolvedAt = Date.now();
+      this.save();
+    }
+  }
+
+  unresolveMistake(questionId) {
+    if (!Array.isArray(this.data.mistakes)) return;
+    const m = this.data.mistakes.find(item => item.id === questionId);
+    if (m) {
+      m.resolved = false;
+      this.save();
+    }
+  }
+
+  getActiveMistakes() {
+    if (!Array.isArray(this.data.mistakes)) return [];
+    return this.data.mistakes.filter(m => !m.resolved);
+  }
+
+  getAllMistakes() {
+    if (!Array.isArray(this.data.mistakes)) return [];
+    return this.data.mistakes;
+  }
+
+  getMistakeById(questionId) {
+    if (!Array.isArray(this.data.mistakes)) return null;
+    return this.data.mistakes.find(m => m.id === questionId) || null;
+  }
+
+  clearResolvedMistakes() {
+    if (!Array.isArray(this.data.mistakes)) return;
+    this.data.mistakes = this.data.mistakes.filter(m => !m.resolved);
     this.save();
   }
 

@@ -14,7 +14,7 @@ const FeedbackController = {
     this.activeSheet = sheet;
   },
 
-  show(isCorrect, userAnswer, question, onNextQuestion, onRetryQuestion, presentation) {
+  show(isCorrect, userAnswer, question, onNextQuestion, onRetryQuestion, presentation, options = {}) {
     if (!this.activeSheet) this.init();
 
     // Fallback to QuestionRenderer's active presentation if not passed directly
@@ -22,18 +22,40 @@ const FeedbackController = {
       presentation = QuestionRenderer.currentPresentation;
     }
 
-    const xpEarned = isCorrect ? (question.xp || 15) : 0;
+    const isReview = !!(options && options.isReview);
+    const xpEarned = isCorrect ? (isReview ? 20 : (question.xp || 15)) : 0;
     if (isCorrect) {
       State.addXP(xpEarned);
-    } else {
+    } else if (!isReview) {
       State.loseLife();
     }
 
-    // Record in state
-    State.recordAnswer(question, isCorrect);
+    // Determine why chosen answer is wrong if multiple choice
+    let rawWhyWrong = '';
+    let whyWrongText = '';
+    if (!isCorrect) {
+      if (presentation && typeof presentation.getWhyWrong === 'function') {
+        rawWhyWrong = presentation.getWhyWrong(userAnswer) || '';
+      }
+      if (!rawWhyWrong && question.whyWrong) {
+        if (typeof userAnswer === 'number' && question.whyWrong[userAnswer]) {
+          rawWhyWrong = question.whyWrong[userAnswer];
+        }
+      }
+      if (rawWhyWrong) {
+        whyWrongText = `<strong>Por que a sua escolha está incorreta:</strong> ${rawWhyWrong}`;
+      }
+    }
 
-    // Check if lives reached zero
-    if (State.data.lives <= 0) {
+    // Record in state with rich mistake tracking
+    State.recordAnswer(question, isCorrect, {
+      userAnswer,
+      whyWrong: rawWhyWrong,
+      isReview
+    });
+
+    // Check if lives reached zero (only in campaign mode, never in review)
+    if (!isReview && State.data.lives <= 0) {
       this.activeSheet.classList.remove('active');
       this.showGameOverModal(question, () => {
         State.restoreLives();
@@ -44,22 +66,6 @@ const FeedbackController = {
         }
       });
       return;
-    }
-
-    // Determine why chosen answer is wrong if multiple choice
-    let whyWrongText = '';
-    if (!isCorrect) {
-      if (presentation && typeof presentation.getWhyWrong === 'function') {
-        const reason = presentation.getWhyWrong(userAnswer);
-        if (reason) {
-          whyWrongText = `<strong>Por que a sua escolha está incorreta:</strong> ${reason}`;
-        }
-      }
-      if (!whyWrongText && (question.type === 'single' || question.type === 'cause_effect') && question.whyWrong) {
-        if (typeof userAnswer === 'number' && question.whyWrong[userAnswer]) {
-          whyWrongText = `<strong>Por que a sua escolha está incorreta:</strong> ${question.whyWrong[userAnswer]}`;
-        }
-      }
     }
 
     // Determine correct answer text
@@ -73,12 +79,12 @@ const FeedbackController = {
       } else if (question.type === 'tf') {
         correctAnswerText = `<strong>Gabarito:</strong> ${question.correctIndex === 0 ? 'Verdadeiro' : 'Falso'}`;
       } else if (question.type === 'order') {
-        correctAnswerText = `<strong>Sequência correta:</strong> ${question.steps.join(' → ')}`;
+        correctAnswerText = `<strong>Sequência correta:</strong> ${(question.steps || []).join(' → ')}`;
       }
     }
 
     // Check mistake frequency for "REVISÃO NECESSÁRIA" trigger
-    const topicMistake = State.data.mistakes.find(m => m.topic === question.topic);
+    const topicMistake = Array.isArray(State.data.mistakes) ? State.data.mistakes.find(m => m.topic === question.topic && !m.resolved) : null;
     const showMiniReviewCallout = (!isCorrect && topicMistake && topicMistake.failCount >= 2);
 
     this.activeSheet.className = `feedback-sheet ${isCorrect ? 'correct' : 'incorrect'} active`;
@@ -97,14 +103,23 @@ const FeedbackController = {
               <span class="badge badge-success" style="font-size: 0.85rem;">
                 ${Icons.get('bolt', 14)} +${xpEarned} XP
               </span>
+              ${isReview ? `
+                <span class="badge" style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-weight: 800; font-size: 0.82rem;">
+                  ${Icons.get('sparkles', 14)} Erro Superado!
+                </span>
+              ` : ''}
               <span class="badge badge-princess" style="font-size: 0.95rem; font-weight: 800; background: linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%); color: #be123c; border: 1.5px solid #fda4af; display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: var(--radius-full); box-shadow: 0 2px 6px rgba(225, 29, 72, 0.15);">
                 ${Icons.get('heartFilled', 16)} Eu te amo princesa
+              </span>
+            ` : (isReview ? `
+              <span class="badge" style="color: var(--amber-700); background-color: var(--amber-100); font-weight: 700; font-size: 0.82rem;">
+                ${Icons.get('refresh', 14)} Treino de Revisão (Vidas preservadas)
               </span>
             ` : `
               <span class="badge badge-slate" style="color: var(--crimson-700); background-color: var(--crimson-100);">
                 ${Icons.get('heart', 14)} -1 Vida
               </span>
-            `}
+            `)}
           </div>
 
           ${correctAnswerText ? `

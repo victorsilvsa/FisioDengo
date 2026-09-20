@@ -110,7 +110,7 @@ const AppRouter = {
       case 'review-quiz':
         const revEl = document.getElementById('view-review');
         if (revEl) revEl.style.display = 'block';
-        if (viewName === 'review') {
+        if (typeof ReviewEngine !== 'undefined') {
           ReviewEngine.renderHub();
         }
         break;
@@ -741,11 +741,11 @@ const AppRouter = {
             <div style="font-size: 0.75rem; color: var(--slate-400); margin-top: 2px;">${State.data.correctCount || 0} acertos</div>
           </div>
           <div class="card" style="padding: 20px; text-align: center; border-radius: var(--radius-lg);">
-            <div style="font-size: 0.76rem; font-weight: 800; text-transform: uppercase; color: var(--slate-500); margin-bottom: 4px; letter-spacing: 0.05em;">Banco de Revisão</div>
-            <div style="font-size: 2rem; font-weight: 900; color: ${(State.data.reviewBank && State.data.reviewBank.length > 0) ? 'var(--crimson-600)' : 'var(--emerald-600)'};">
-              ${(State.data.reviewBank || []).length}
+            <div style="font-size: 0.76rem; font-weight: 800; text-transform: uppercase; color: var(--slate-500); margin-bottom: 4px; letter-spacing: 0.05em;">Caderno de Erros</div>
+            <div style="font-size: 2rem; font-weight: 900; color: ${(typeof State !== 'undefined' && State.getActiveMistakes && State.getActiveMistakes().length > 0) ? 'var(--crimson-600)' : 'var(--emerald-600)'};">
+              ${(typeof State !== 'undefined' && State.getActiveMistakes) ? State.getActiveMistakes().length : 0}
             </div>
-            <div style="font-size: 0.75rem; color: var(--slate-400); margin-top: 2px;">Itens para revisar</div>
+            <div style="font-size: 0.75rem; color: var(--slate-400); margin-top: 2px;">Erros a superar</div>
           </div>
         </div>
 

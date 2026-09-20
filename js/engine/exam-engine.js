@@ -296,8 +296,17 @@ const ExamEngine = {
       breakdown[q.topic].total++;
       if (isCorrect) breakdown[q.topic].correct++;
 
-      // Also record in state domain system
-      State.updateDomain(q.topic, isCorrect);
+      // Also record in state (captures exam mistakes persistently and updates domain)
+      const rawQ = q.rawQuestion || q;
+      let whyWrong = '';
+      if (!isCorrect && rawQ.whyWrong && typeof userAns === 'number') {
+        whyWrong = rawQ.whyWrong[userAns] || '';
+      }
+      State.recordAnswer(rawQ, isCorrect, {
+        userAnswer: userAns,
+        whyWrong: whyWrong,
+        source: 'exam'
+      });
     });
 
     const grade = ((correctCount / total) * 10).toFixed(1);
@@ -472,9 +481,12 @@ const ExamEngine = {
         </div>
 
         <!-- Back to Hub Actions -->
-        <div style="display: flex; gap: 14px; justify-content: center;">
+        <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
           <button id="btn-exam-redo" class="btn btn-primary btn-lg">
             ${Icons.get('refresh', 18)} Fazer Outro Simulado
+          </button>
+          <button id="btn-exam-to-review" class="btn btn-outline btn-lg" style="border-color: var(--crimson-400); color: var(--crimson-700);">
+            ${Icons.get('book', 18)} Caderno de Erros
           </button>
           <button id="btn-exam-back-map" class="btn btn-outline btn-lg">
             ${Icons.get('map', 18)} Voltar ao Mapa de Fases
@@ -486,6 +498,13 @@ const ExamEngine = {
     document.getElementById('btn-exam-redo').addEventListener('click', () => {
       this.startExam();
     });
+
+    const reviewBtn = document.getElementById('btn-exam-to-review');
+    if (reviewBtn) {
+      reviewBtn.addEventListener('click', () => {
+        window.AppRouter.navigate('review');
+      });
+    }
 
     document.getElementById('btn-exam-back-map').addEventListener('click', () => {
       window.AppRouter.navigate('map');

@@ -236,3 +236,10 @@ const FeedbackController = {
     });
   }
 };
+
+if (typeof window !== 'undefined') {
+  window.FeedbackController = FeedbackController;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { FeedbackController };
+}

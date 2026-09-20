@@ -196,3 +196,10 @@ const Icons = {
     return icons[name] || '';
   }
 };
+
+if (typeof window !== 'undefined') {
+  window.Icons = Icons;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { Icons };
+}

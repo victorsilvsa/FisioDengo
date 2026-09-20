@@ -492,3 +492,10 @@ const ExamEngine = {
     });
   }
 };
+
+if (typeof window !== 'undefined') {
+  window.ExamEngine = ExamEngine;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { ExamEngine };
+}

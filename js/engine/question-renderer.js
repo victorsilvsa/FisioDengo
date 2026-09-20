@@ -346,3 +346,10 @@ const QuestionRenderer = {
     }
   }
 };
+
+if (typeof window !== 'undefined') {
+  window.QuestionRenderer = QuestionRenderer;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { QuestionRenderer };
+}

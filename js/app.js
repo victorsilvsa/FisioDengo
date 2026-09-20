@@ -6,7 +6,17 @@ window.App = {
   get Feedback() { return typeof FeedbackController !== 'undefined' ? FeedbackController : null; },
   get Exam() { return typeof ExamEngine !== 'undefined' ? ExamEngine : null; },
   get Review() { return typeof ReviewEngine !== 'undefined' ? ReviewEngine : null; },
-  get WrittenExam() { return typeof WrittenExamEngine !== 'undefined' ? WrittenExamEngine : null; }
+  get WrittenExam() { return typeof WrittenExamEngine !== 'undefined' ? WrittenExamEngine : null; },
+  get Icons() { return typeof Icons !== 'undefined' ? Icons : null; },
+  get QuestionShuffler() { return typeof QuestionShuffler !== 'undefined' ? QuestionShuffler : null; },
+
+  // Convenience shortcuts for inline HTML onclick handlers
+  navigate(route, params) {
+    if (window.AppRouter) return window.AppRouter.navigate(route, params);
+  },
+  startPhase(phaseId) {
+    if (window.AppRouter) return window.AppRouter.startPhase(phaseId);
+  }
 };
 
 document.addEventListener('DOMContentLoaded', () => {

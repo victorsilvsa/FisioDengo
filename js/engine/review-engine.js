@@ -3,6 +3,10 @@ const ReviewEngine = {
   currentQuestions: [],
   currentIndex: 0,
 
+  render() {
+    return this.renderHub();
+  },
+
   renderHub() {
     const container = document.getElementById('review-view-container');
     if (!container) return;
@@ -187,3 +191,10 @@ const ReviewEngine = {
     });
   }
 };
+
+if (typeof window !== 'undefined') {
+  window.ReviewEngine = ReviewEngine;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { ReviewEngine };
+}

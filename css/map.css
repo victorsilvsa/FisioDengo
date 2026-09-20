@@ -1,0 +1,321 @@
+/* ==========================================================================
+   PROGRESSION MAP & WORLD JOURNEY
+   ========================================================================== */
+
+.map-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Overview Banner - Preenchimento Total da Largura */
+.map-hero-card {
+  width: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, var(--primary-900), var(--primary-700));
+  border-radius: var(--radius-xl);
+  padding: 32px 36px;
+  color: #ffffff;
+  margin-bottom: 28px;
+  box-shadow: 0 10px 25px -5px rgba(29, 78, 216, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.map-hero-card::after {
+  content: "";
+  position: absolute;
+  right: -20px;
+  bottom: -40px;
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+  border-radius: var(--radius-full);
+}
+
+.map-hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.map-hero-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.map-hero-subtitle {
+  font-size: 0.98rem;
+  color: var(--primary-100);
+  margin-bottom: 20px;
+  max-width: 800px;
+  line-height: 1.5;
+}
+
+.map-hero-stats {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.map-hero-stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.map-hero-stat-val {
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.map-hero-stat-lbl {
+  font-size: 0.75rem;
+  color: var(--primary-100);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Worlds Navigation Tabs - Preenchimento da Largura Total, Sem Barra de Rolagem */
+.worlds-selector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: stretch;
+  align-items: stretch;
+  gap: 12px;
+  padding: 4px 0 20px 0;
+  margin-bottom: 24px;
+  width: 100%;
+  overflow: visible;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.worlds-selector::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.world-tab-btn {
+  flex: 1 1 200px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background-color: var(--bg-surface);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  color: var(--slate-700);
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+  text-align: center;
+}
+
+.world-tab-btn:hover {
+  border-color: var(--primary-400);
+  color: var(--primary-700);
+  background-color: var(--primary-50);
+  transform: translateY(-1px);
+}
+
+.world-tab-btn.active {
+  background-color: var(--primary-600);
+  color: #ffffff;
+  border-color: var(--primary-600);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.world-tab-btn .world-icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Path / Learning Track Nodes */
+.learning-track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 20px 0 60px 0;
+}
+
+.track-node-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin-bottom: 36px;
+  width: 100%;
+}
+
+/* Connector Line */
+.track-connector {
+  width: 4px;
+  height: 36px;
+  background-color: var(--slate-200);
+  margin: 0 auto;
+}
+
+.track-connector.completed {
+  background-color: var(--primary-500);
+}
+
+/* The Node Button */
+.node-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-surface);
+  border: 4px solid var(--slate-200);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  color: var(--slate-400);
+}
+
+.node-circle:hover:not(.locked) {
+  transform: scale(1.06);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Node States */
+.node-circle.completed {
+  background-color: var(--emerald-50);
+  border-color: var(--emerald-500);
+  color: var(--emerald-600);
+}
+
+.node-circle.current {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  border-color: var(--primary-400);
+  color: #ffffff;
+  box-shadow: 0 0 0 8px rgba(37, 99, 235, 0.2);
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(37, 99, 235, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+}
+
+.node-circle.locked {
+  background-color: var(--slate-100);
+  border-color: var(--slate-300);
+  color: var(--slate-400);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.node-icon-inner {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Node Info Card below or beside */
+.node-info-badge {
+  margin-top: 10px;
+  text-align: center;
+  max-width: 240px;
+}
+
+.node-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--slate-900);
+  margin-bottom: 2px;
+}
+
+.node-domain-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--slate-500);
+  background-color: var(--slate-100);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.node-domain-pill.high {
+  background-color: var(--emerald-50);
+  color: var(--emerald-700);
+}
+
+.node-domain-pill.medium {
+  background-color: var(--amber-50);
+  color: var(--amber-700);
+}
+
+.node-domain-pill.low {
+  background-color: var(--crimson-50);
+  color: var(--crimson-700);
+}
+
+/* Alternating Zig-Zag layout for nodes */
+.track-node-wrapper:nth-child(odd) .node-circle {
+  transform: translateX(-35px);
+}
+.track-node-wrapper:nth-child(even) .node-circle {
+  transform: translateX(35px);
+}
+.track-node-wrapper:nth-child(odd) .node-info-badge {
+  transform: translateX(-35px);
+}
+.track-node-wrapper:nth-child(even) .node-info-badge {
+  transform: translateX(35px);
+}
+
+.track-node-wrapper:nth-child(odd) .node-circle:hover:not(.locked) {
+  transform: translateX(-35px) scale(1.06);
+}
+.track-node-wrapper:nth-child(even) .node-circle:hover:not(.locked) {
+  transform: translateX(35px) scale(1.06);
+}
+
+@media (max-width: 600px) {
+  .track-node-wrapper:nth-child(odd) .node-circle,
+  .track-node-wrapper:nth-child(even) .node-circle,
+  .track-node-wrapper:nth-child(odd) .node-info-badge,
+  .track-node-wrapper:nth-child(even) .node-info-badge {
+    transform: none;
+  }
+  .track-node-wrapper:nth-child(odd) .node-circle:hover:not(.locked),
+  .track-node-wrapper:nth-child(even) .node-circle:hover:not(.locked) {
+    transform: scale(1.06);
+  }
+}

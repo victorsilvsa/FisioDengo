@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>FisioDengo — Fisiologia Humana</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e11d48'><path d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z'/></svg>">
+  
+  <!-- Modern Clean Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/questions.css">
+  <link rel="stylesheet" href="css/map.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Desktop Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+            <path d="M3.22 12H9.5l1.5-3 2 6 1.5-3h6.28"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">FisioDengo</div>
+          <div class="brand-subtitle">Fisiologia Humana</div>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <button class="nav-item active" data-route="map">
+          <span class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+              <line x1="8" y1="2" x2="8" y2="18"/>
+              <line x1="16" y1="6" x2="16" y2="22"/>
+            </svg>
+          </span>
+          Trilha de Mundos
+        </button>
+
+        <button class="nav-item" data-route="review">
+          <span class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"/>
+              <polyline points="1 20 1 14 7 14"/>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+          </span>
+          Revisar Erros
+        </button>
+
+        <button class="nav-item" data-route="exam">
+          <span class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </span>
+          Simulado (Prova)
+        </button>
+
+        <button class="nav-item" data-route="written-exam">
+          <span class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </span>
+          Prova Escrita
+        </button>
+
+        <button class="nav-item" data-route="stats">
+          <span class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </span>
+          Domínio & Estatísticas
+        </button>
+
+        <button class="nav-item" data-route="references">
+          <span class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </span>
+          Fontes & Referências
+        </button>
+      </nav>
+
+      <div style="padding: 16px; background-color: var(--slate-50); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.8rem; color: var(--slate-600);">
+        <div style="font-weight: 700; color: var(--slate-800); margin-bottom: 2px;">Método Fisiológico</div>
+        Ensino conceitual progressivo e fundamentado em mecanismos.
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Sticky Header -->
+      <header class="top-header">
+        <div class="header-user-status">
+          <div class="rank-pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+            </svg>
+            <span id="header-rank-text">Nível 1 • Iniciante</span>
+          </div>
+        </div>
+
+        <div class="header-stats">
+          <!-- Streak -->
+          <div class="stat-chip streak" title="Dias seguidos de estudo">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 17c1.38 0 2.5-1.12 2.5-2.5 0-.61-.22-1.17-.59-1.61L12 11.5l-.91 1.39c-.37.44-.59 1-.59 1.61zM12 2C6.5 6 4 9.5 4 14a8 8 0 0 0 16 0c0-4.5-2.5-8-8-12zm0 18a6 6 0 0 1-6-6c0-3.35 1.9-6.13 6-9.58 4.1 3.45 6 6.23 6 9.58a6 6 0 0 1-6 6z"/>
+            </svg>
+            <span id="header-streak-text">1 dia</span>
+          </div>
+
+          <!-- XP -->
+          <div class="stat-chip xp" title="Pontos de experiência acumulados">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            <span id="header-xp-text">0 XP</span>
+          </div>
+
+          <!-- Lives -->
+          <div class="stat-chip lives" title="Vidas disponíveis na sessão">
+            <div id="header-hearts-wrap" class="hearts-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="header-actions">
+            <button id="btn-toggle-theme" class="action-btn" title="Alternar tema claro/escuro">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Viewport Views -->
+      <div class="view-viewport">
+        <!-- 1. MAP VIEW -->
+        <div id="view-map">
+          <div id="map-view-container"></div>
+        </div>
+
+        <!-- 2. LESSON VIEW -->
+        <div id="view-lesson" style="display: none;">
+          <div id="lesson-view-container"></div>
+        </div>
+
+        <!-- 3. QUIZ VIEW -->
+        <div id="view-quiz" style="display: none;">
+          <div id="quiz-view-container"></div>
+        </div>
+
+        <!-- 4. REVIEW VIEW -->
+        <div id="view-review" style="display: none;">
+          <div id="review-view-container"></div>
+        </div>
+
+        <!-- 5. EXAM VIEW -->
+        <div id="view-exam" style="display: none;">
+          <div id="exam-view-container"></div>
+        </div>
+
+        <!-- 6. WRITTEN EXAM VIEW (PROVA ESCRITA DISCURSIVA) -->
+        <div id="view-written-exam" style="display: none;">
+          <div id="written-exam-container"></div>
+        </div>
+
+        <!-- 7. STATS VIEW -->
+        <div id="view-stats" style="display: none;">
+          <div id="stats-view-container"></div>
+        </div>
+
+        <!-- 8. REFERENCES VIEW -->
+        <div id="view-references" style="display: none;">
+          <div id="references-view-container"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- In-App Research Deep-Dive Modal (100% dentro do aplicativo, sem sair para sites externos) -->
+    <div id="modal-research-deepdive" class="modal-backdrop">
+      <div class="modal-dialog research-dialog">
+        <div id="research-modal-content"></div>
+      </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+      <button class="mobile-nav-item active" data-route="map">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+          <line x1="8" y1="2" x2="8" y2="18"/>
+          <line x1="16" y1="6" x2="16" y2="22"/>
+        </svg>
+        <span>Trilha</span>
+      </button>
+
+      <button class="mobile-nav-item" data-route="review">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"/>
+          <polyline points="1 20 1 14 7 14"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        <span>Revisar</span>
+      </button>
+
+      <button class="mobile-nav-item" data-route="exam">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        <span>Simulado</span>
+      </button>
+
+      <button class="mobile-nav-item" data-route="stats">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        <span>Domínio</span>
+      </button>
+
+      <button class="mobile-nav-item" data-route="references">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+        <span>Fontes</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="js/ui/icons.js"></script>
+  <script src="js/engine/state.js"></script>
+  <script src="js/engine/question-shuffler.js"></script>
+  <script src="js/data/references.js"></script>
+  <script src="js/data/world1_celular.js"></script>
+  <script src="js/data/world2_sangue.js"></script>
+  <script src="js/data/world3_cardio.js"></script>
+  <script src="js/data/world4_respiratorio.js"></script>
+  <script src="js/data/world5_integrado.js"></script>
+  <script src="js/data/written_exam_data.js"></script>
+  <script src="js/engine/lesson-renderer.js"></script>
+  <script src="js/engine/question-renderer.js"></script>
+  <script src="js/engine/feedback-controller.js"></script>
+  <script src="js/engine/review-engine.js"></script>
+  <script src="js/engine/exam-engine.js"></script>
+  <script src="js/engine/written-exam-engine.js"></script>
+  <script src="js/ui/navigation.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

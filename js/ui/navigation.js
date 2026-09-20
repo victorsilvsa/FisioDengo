@@ -6,10 +6,51 @@ const AppRouter = {
   activePhaseQuestionIdx: 0,
   phaseStats: { correct: 0, total: 0, xpStart: 0 },
 
+  getWorldStatus(worldIdx) {
+    const worlds = [WORLD_1_DATA, WORLD_2_DATA, WORLD_3_DATA, WORLD_4_DATA, WORLD_5_DATA];
+    const world = worlds[worldIdx];
+    if (!world) return { isUnlocked: false, isCompleted: false, completedCount: 0, totalCount: 0 };
+
+    const totalCount = world.phases.length;
+    const completedCount = world.phases.filter(p => State.isNodeCompleted(p.id)).length;
+    const isCompleted = totalCount > 0 && completedCount === totalCount;
+
+    let isUnlocked = false;
+    if (worldIdx === 0) {
+      isUnlocked = true;
+    } else {
+      const prevWorld = worlds[worldIdx - 1];
+      const prevCompleted = prevWorld && prevWorld.phases.every(p => State.isNodeCompleted(p.id));
+      const firstPhaseUnlocked = world.phases[0] && State.isNodeUnlocked(world.phases[0].id);
+      isUnlocked = prevCompleted || firstPhaseUnlocked;
+    }
+
+    return {
+      isUnlocked,
+      isCompleted,
+      completedCount,
+      totalCount
+    };
+  },
+
+  getRecommendedWorldIndex() {
+    const worlds = [WORLD_1_DATA, WORLD_2_DATA, WORLD_3_DATA, WORLD_4_DATA, WORLD_5_DATA];
+    for (let i = 0; i < worlds.length; i++) {
+      const status = this.getWorldStatus(i);
+      if (status.isUnlocked && !status.isCompleted) {
+        return i;
+      }
+    }
+    return 0;
+  },
+
   init() {
     this.bindHeaderStats();
     this.bindNavigationButtons();
     this.renderHeader();
+
+    // Auto-detect player's active world based on progression
+    this.activeWorldIndex = this.getRecommendedWorldIndex();
 
     // Listen to state changes
     State.subscribe(() => {
@@ -158,7 +199,11 @@ const AppRouter = {
     if (!container) return;
 
     const worlds = [WORLD_1_DATA, WORLD_2_DATA, WORLD_3_DATA, WORLD_4_DATA, WORLD_5_DATA];
+    if (this.activeWorldIndex < 0 || this.activeWorldIndex >= worlds.length) {
+      this.activeWorldIndex = this.getRecommendedWorldIndex();
+    }
     const currentWorld = worlds[this.activeWorldIndex] || worlds[0];
+    const currentWorldStatus = this.getWorldStatus(this.activeWorldIndex);
 
     // Compute course progress
     let totalPhases = 0;
@@ -221,16 +266,34 @@ const AppRouter = {
 
         <!-- World Selection Tabs -->
         <div class="worlds-selector">
-          ${worlds.map((w, idx) => `
-            <button class="world-tab-btn ${idx === this.activeWorldIndex ? 'active' : ''}" data-world-idx="${idx}">
-              <div class="world-icon">${Icons.get(w.icon, 20)}</div>
-              <span>${w.title}</span>
-            </button>
-          `).join('')}
+          ${worlds.map((w, idx) => {
+            const status = this.getWorldStatus(idx);
+            let badgeHtml = '';
+            let statusClass = '';
+            if (status.isCompleted) {
+              statusClass = 'completed';
+              badgeHtml = `<span class="world-tab-badge completed">${Icons.get('check', 11)} 6/6 Concluído</span>`;
+            } else if (status.isUnlocked) {
+              statusClass = 'unlocked';
+              badgeHtml = `<span class="world-tab-badge in-progress">${status.completedCount}/6 Fases</span>`;
+            } else {
+              statusClass = 'locked';
+              badgeHtml = `<span class="world-tab-badge locked">${Icons.get('lock', 11)} Bloqueado</span>`;
+            }
+            return `
+              <button class="world-tab-btn ${idx === this.activeWorldIndex ? 'active' : ''} ${statusClass}" data-world-idx="${idx}" title="${w.title}">
+                <div class="world-tab-top">
+                  <div class="world-icon">${Icons.get(w.icon, 18)}</div>
+                  ${badgeHtml}
+                </div>
+                <span class="world-tab-title">${w.title}</span>
+              </button>
+            `;
+          }).join('')}
         </div>
 
         <!-- World Title & Subtitle Banner -->
-        <div style="text-align: center; margin-bottom: 32px;">
+        <div style="text-align: center; margin-bottom: 24px;">
           <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900);">
             ${currentWorld.title}
           </h2>
@@ -238,6 +301,31 @@ const AppRouter = {
             ${currentWorld.subtitle}
           </p>
         </div>
+
+        ${!currentWorldStatus.isUnlocked ? `
+          <!-- Locked World Notice Banner -->
+          <div class="card locked-world-banner" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1.5px dashed #cbd5e1; border-radius: var(--radius-xl); padding: 22px 24px; text-align: center; margin: 0 auto 28px auto; max-width: 640px;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: #e2e8f0; color: #64748b; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+              ${Icons.get('lock', 22)}
+            </div>
+            <h3 style="font-size: 1.12rem; font-weight: 800; color: var(--slate-800); margin-bottom: 6px;">
+              Matéria Bloqueada
+            </h3>
+            <p style="font-size: 0.88rem; color: var(--slate-600); margin-bottom: 14px; line-height: 1.5;">
+              Para desbloquear as 6 fases de <strong>${currentWorld.title}</strong>, você precisa primeiro concluir todas as fases da matéria anterior: <strong>${worlds[this.activeWorldIndex - 1]?.title || 'anterior'}</strong>.
+            </p>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-goto-active-world" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 8px;">
+              ${Icons.get('sparkles', 14)} Continuar na Matéria Liberada (${worlds[this.getRecommendedWorldIndex()].title})
+            </button>
+          </div>
+        ` : (currentWorldStatus.isCompleted ? `
+          <!-- Completed World Notice -->
+          <div style="text-align: center; margin-bottom: 24px;">
+            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; border-radius: var(--radius-full); font-size: 0.84rem; font-weight: 800; box-shadow: var(--shadow-sm);">
+              ${Icons.get('check', 15)} Matéria Concluída! Todas as 6 fases foram dominadas com sucesso.
+            </span>
+          </div>
+        ` : '')}
 
         <!-- Learning Track Zig-Zag Nodes -->
         <div class="learning-track">
@@ -351,6 +439,15 @@ const AppRouter = {
       });
     }
 
+    // Locked world banner button
+    const gotoActiveBtn = document.getElementById('btn-goto-active-world');
+    if (gotoActiveBtn) {
+      gotoActiveBtn.addEventListener('click', () => {
+        this.activeWorldIndex = this.getRecommendedWorldIndex();
+        this.renderMap();
+      });
+    }
+
     // Listeners for world tabs
     container.querySelectorAll('.world-tab-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -421,12 +518,58 @@ const AppRouter = {
   },
 
   finishPhase() {
+    const worlds = [WORLD_1_DATA, WORLD_2_DATA, WORLD_3_DATA, WORLD_4_DATA, WORLD_5_DATA];
+    const currentWorldIdx = worlds.findIndex(w => w.phases.some(p => p.id === this.activePhase.id));
+    const currentWorld = worlds[currentWorldIdx >= 0 ? currentWorldIdx : this.activeWorldIndex] || worlds[0];
+    const currentWorldPhases = currentWorld.phases;
+
     // Unlock next phase
     State.completePhase(this.activePhase.id, this.activePhase.nextPhaseId);
 
     const xpEarned = State.data.xp - this.phaseStats.xpStart;
     const accuracy = Math.round((this.phaseStats.correct / this.phaseStats.total) * 100);
     const domain = State.getDomain(this.activePhase.topic);
+
+    const isLastPhaseOfWorld = currentWorldPhases[currentWorldPhases.length - 1]?.id === this.activePhase.id;
+    const isFinalPhaseOfGame = this.activePhase.id === 'w5_p6';
+    const nextWorld = worlds[(currentWorldIdx >= 0 ? currentWorldIdx : this.activeWorldIndex) + 1];
+
+    let modalTitle = 'Lição Concluída!';
+    let modalSubtitle = `Você concluiu a fase <strong>${this.activePhase.title}</strong> com sucesso!`;
+    let bannerAlert = '';
+    let actionBtnText = `Continuar para o Mapa ${Icons.get('arrowRight', 18)}`;
+    let nextWorldToSwitch = currentWorldIdx >= 0 ? currentWorldIdx : this.activeWorldIndex;
+
+    if (isFinalPhaseOfGame) {
+      modalTitle = 'Fisiologia Médica Concluída!';
+      modalSubtitle = 'Parabéns! Você completou com excelência acadêmica todos os 30 níveis dos 5 Mundos!';
+      bannerAlert = `
+        <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1.5px solid #6ee7b7; border-radius: var(--radius-lg); padding: 14px 18px; margin: 12px 0 16px 0; text-align: center;">
+          <div style="font-size: 0.95rem; font-weight: 800; color: #065f46; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            ${Icons.get('trophy', 20)} Você dominou todos os 5 Sistemas do Corpo Humano!
+          </div>
+          <div style="font-size: 0.82rem; color: #047857; margin-top: 4px;">
+            Você alcançou a maestria máxima. Teste sua precisão na Prova Escrita (23 Questões Discursivas) ou acompanhe suas métricas no Dashboard de Desempenho!
+          </div>
+        </div>
+      `;
+      actionBtnText = `Ver Dashboard de Desempenho ${Icons.get('arrowRight', 18)}`;
+    } else if (isLastPhaseOfWorld && nextWorld) {
+      nextWorldToSwitch = (currentWorldIdx >= 0 ? currentWorldIdx : this.activeWorldIndex) + 1;
+      modalTitle = 'Matéria Concluída & Novo Módulo Desbloqueado!';
+      modalSubtitle = `Você concluiu com maestria todas as fases de <strong>${currentWorld.title}</strong>!`;
+      bannerAlert = `
+        <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1.5px solid #93c5fd; border-radius: var(--radius-lg); padding: 14px 18px; margin: 12px 0 16px 0; text-align: center;">
+          <div style="font-size: 0.95rem; font-weight: 800; color: #1e40af; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            ${Icons.get('sparkles', 18)} NOVA MATÉRIA LIBERADA: ${nextWorld.title}!
+          </div>
+          <div style="font-size: 0.82rem; color: #1d4ed8; margin-top: 4px;">
+            As 6 fases e casos clínicos deste novo módulo já estão desbloqueadas na trilha!
+          </div>
+        </div>
+      `;
+      actionBtnText = `Avançar para ${nextWorld.title} ${Icons.get('arrowRight', 18)}`;
+    }
 
     // Show completion modal
     let modal = document.getElementById('lesson-complete-modal');
@@ -444,15 +587,17 @@ const AppRouter = {
         <div class="modal-icon-header success">
           ${Icons.get('trophy', 36)}
         </div>
-        <h2 class="modal-title">Lição Concluída!</h2>
+        <h2 class="modal-title">${modalTitle}</h2>
         <div style="margin: 8px 0 14px 0;">
           <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 6px 18px; background: linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%); color: #be123c; border: 1.5px solid #fda4af; border-radius: var(--radius-full); font-weight: 800; font-size: 0.95rem; box-shadow: 0 2px 6px rgba(225, 29, 72, 0.15);">
             ${Icons.get('heartFilled', 18)} Eu te amo princesa!
           </span>
         </div>
         <p class="modal-subtitle">
-          Você concluiu a fase <strong>${this.activePhase.title}</strong> com sucesso!
+          ${modalSubtitle}
         </p>
+
+        ${bannerAlert}
 
         <div class="modal-stats-grid">
           <div class="modal-stat-box">
@@ -471,7 +616,7 @@ const AppRouter = {
 
         <div style="display: flex; gap: 12px; flex-direction: column;">
           <button id="btn-next-lesson" class="btn btn-primary btn-lg btn-block">
-            Continuar para o Mapa ${Icons.get('arrowRight', 18)}
+            ${actionBtnText}
           </button>
         </div>
       </div>
@@ -479,7 +624,12 @@ const AppRouter = {
 
     document.getElementById('btn-next-lesson').addEventListener('click', () => {
       modal.classList.remove('active');
-      this.navigate('map');
+      if (isFinalPhaseOfGame) {
+        this.navigate('stats');
+      } else {
+        this.activeWorldIndex = nextWorldToSwitch;
+        this.navigate('map');
+      }
     });
   },
 

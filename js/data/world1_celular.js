@@ -619,26 +619,19 @@ const WORLD_1_DATA = {
         },
         {
           "id": "w1_q23",
-          "type": "order",
+          "type": "single",
           "topic": "Potencial de Ação e Período Refratário",
           "difficulty": "hard",
           "xp": 25,
           "title": "Ordene cronologicamente as etapas do potencial de ação neuronal típico:",
           "examPrompt": "\n            <p style=\"font-weight: 700; margin-bottom: 8px;\">Considere as etapas biofísicas de um potencial de ação neuronal clássico:</p>\n            <ol style=\"padding-left: 20px; line-height: 1.6; margin-bottom: 12px;\">\n              <li>Estímulo despolarizante atinge o potencial limiar de disparo (~ -55 mV).</li>\n              <li>Abertura rápida de canais de Na+ voltagem-dependentes com influxo iônico explosivo (despolarização).</li>\n              <li>Inativação dos canais de Na+ e abertura lenta de canais de K+ voltagem-dependentes.</li>\n              <li>Efluxo acelerado de íons K+ restaurando o interior negativo da membrana (repolarização).</li>\n              <li>Hiperpolarização pós-potencial transitória seguida de restauração do potencial de repouso (-70 mV).</li>\n            </ol>\n            <p style=\"font-weight: 700;\">A sequência cronológica correta dos eventos bioelétricos é:</p>\n          ",
           "options": [
-            "1 → 2 → 3 → 4 → 5",
-            "2 → 1 → 4 → 3 → 5",
-            "1 → 3 → 2 → 5 → 4",
-            "3 → 2 → 1 → 4 → 5"
+            "1 → 2 → 3 → 4 → 5 (Limiar → Influxo de Na⁺ → Inativação de Na⁺/K⁺ lento → Repolarização por K⁺ → Hiperpolarização)",
+            "2 → 1 → 4 → 3 → 5 (Influxo de Na⁺ → Limiar → Repolarização por K⁺ → Inativação de Na⁺ → Hiperpolarização)",
+            "1 → 3 → 2 → 5 → 4 (Limiar → Inativação de Na⁺ → Influxo de Na⁺ → Hiperpolarização → Repolarização por K⁺)",
+            "3 → 2 → 1 → 4 → 5 (Inativação de Na⁺ → Influxo de Na⁺ → Limiar → Repolarização por K⁺ → Hiperpolarização)"
           ],
           "correctIndex": 0,
-          "steps": [
-            "Estímulo despolarizante atinge o potencial limiar de disparo (~ -55 mV)",
-            "Abertura rápida de canais de Na+ voltagem-dependentes com influxo iônico explosivo (despolarização)",
-            "Inativação dos canais de Na+ e abertura lenta de canais de K+ voltagem-dependentes",
-            "Efluxo acelerado de íons K+ restaurando o interior negativo da membrana (repolarização)",
-            "Hiperpolarização pós-potencial transitória seguida de restauração do potencial de repouso (-70 mV)"
-          ],
           "explanation": "O potencial de ação segue rigorosamente a sequência: despolarização limiar -> ativação de Na+ -> pico com inativação de Na+ e ativação de K+ -> efluxo de K+ (repolarização) -> hiperpolarização tardia.",
           "whyWrong": [
             "Alternativa correta com a ordem biológica sequencial normal.",

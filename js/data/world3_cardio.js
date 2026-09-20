@@ -135,7 +135,7 @@ const WORLD_3_DATA = {
       "questions": [
         {
           "id": "w3_q5",
-          "type": "order",
+          "type": "single",
           "topic": "Eletrofisiologia Cardíaca",
           "difficulty": "medium",
           "xp": 20,
@@ -246,7 +246,7 @@ const WORLD_3_DATA = {
       "questions": [
         {
           "id": "w3_q9",
-          "type": "matching",
+          "type": "single",
           "topic": "Eletrocardiograma (ECG)",
           "difficulty": "medium",
           "xp": 20,

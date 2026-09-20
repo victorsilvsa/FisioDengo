@@ -58,7 +58,7 @@ const QuestionRenderer = {
 
           <h2 class="question-title">${question.title}</h2>
 
-          ${question.examPrompt && (question.type === 'matching' || question.type === 'order') ? `
+          ${question.examPrompt ? `
             <div class="card" style="background-color: var(--slate-50); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px 16px; margin-top: 14px; font-size: 0.9rem; color: var(--slate-800); line-height: 1.6;">
               ${question.examPrompt}
             </div>
@@ -69,15 +69,16 @@ const QuestionRenderer = {
         <div id="question-interactive-body">
     `;
 
-    // Render by type
-    if (question.type === 'single' || question.type === 'cause_effect') {
-      html += this.renderMultipleChoice(presentation ? presentation.displayOptions : question.options);
-    } else if (question.type === 'tf') {
+    // Render by type (guaranteeing multiple choice whenever options exist)
+    if (question.type === 'tf') {
       html += this.renderTrueFalse(question.options);
-    } else if (question.type === 'matching') {
+    } else if (question.type === 'matching' && question.pairs && question.pairs.length > 0) {
       html += this.renderMatching(question.pairs);
-    } else if (question.type === 'order') {
+    } else if (question.type === 'order' && this.orderState && this.orderState.length > 0) {
       html += this.renderOrdering(this.orderState);
+    } else {
+      // Default to Multiple Choice for all single, cause_effect, and any questions with options
+      html += this.renderMultipleChoice(presentation ? presentation.displayOptions : question.options);
     }
 
     html += `
@@ -200,9 +201,9 @@ const QuestionRenderer = {
   },
 
   attachListeners(question, onAnswerSubmit) {
-    // Multiple Choice & Cause Effect
-    if (question.type === 'single' || question.type === 'cause_effect') {
-      const buttons = document.querySelectorAll('.option-btn');
+    // Multiple Choice & Cause Effect (attach whenever option buttons exist)
+    const buttons = document.querySelectorAll('.option-btn');
+    if (buttons.length > 0) {
       buttons.forEach(btn => {
         btn.addEventListener('click', () => {
           const selectedIdx = parseInt(btn.dataset.index, 10);

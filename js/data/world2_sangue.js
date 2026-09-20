@@ -23,6 +23,7 @@ const WORLD_2_DATA = {
       "questions": [
         {
           "id": "w2_q1",
+          "type": "single",
           "topic": "Composição do Sangue e Pressão Oncótica",
           "difficulty": "easy",
           "xp": 15,
@@ -45,7 +46,7 @@ const WORLD_2_DATA = {
         },
         {
           "id": "w2_q2",
-          "type": "matching",
+          "type": "single",
           "topic": "Composição do Sangue e Pressão Oncótica",
           "difficulty": "medium",
           "xp": 20,
@@ -481,26 +482,19 @@ const WORLD_2_DATA = {
       "questions": [
         {
           "id": "w2_q17",
-          "type": "order",
+          "type": "single",
           "topic": "Cascata de Coagulação e Fibrinólise",
           "difficulty": "hard",
           "xp": 25,
           "title": "Ordene cronologicamente as etapas fundamentais da hemostasia humana após lesão vascular:",
           "examPrompt": "\n            <p style=\"font-weight: 700; margin-bottom: 8px;\">Considere as etapas sequenciais fundamentais da hemostasia humana:</p>\n            <ol style=\"padding-left: 20px; line-height: 1.6; margin-bottom: 12px;\">\n              <li>Lesão vascular e exposição do colágeno e fator tecidual subendotelial.</li>\n              <li>Espasmo vascular imediato com vasoconstrição reflexa local.</li>\n              <li>Adesão, ativação e agregação plaquetária formando o tampão plaquetário primário.</li>\n              <li>Cascata de coagulação enzimática culminando na formação de trombina ativa.</li>\n              <li>Conversão de fibrinogênio solúvel em rede insolúvel de fibrina que consolida o coágulo definitivo.</li>\n            </ol>\n            <p style=\"font-weight: 700;\">A sequência cronológica correta é:</p>\n          ",
           "options": [
-            "1 → 2 → 3 → 4 → 5",
-            "2 → 1 → 4 → 3 → 5",
-            "1 → 3 → 2 → 5 → 4",
-            "3 → 1 → 2 → 4 → 5"
+            "1 → 2 → 3 → 4 → 5 (Lesão → Espasmo vascular → Tampão plaquetário → Cascata de trombina → Rede de fibrina)",
+            "2 → 1 → 4 → 3 → 5 (Espasmo vascular → Lesão → Cascata de trombina → Tampão plaquetário → Rede de fibrina)",
+            "1 → 3 → 2 → 5 → 4 (Lesão → Tampão plaquetário → Espasmo vascular → Rede de fibrina → Cascata de trombina)",
+            "3 → 1 → 2 → 4 → 5 (Tampão plaquetário → Lesão → Espasmo vascular → Cascata de trombina → Rede de fibrina)"
           ],
           "correctIndex": 0,
-          "steps": [
-            "Lesão vascular e exposição do colágeno e fator tecidual subendotelial",
-            "Espasmo vascular imediato com vasoconstrição reflexa local",
-            "Adesão, ativação e agregação plaquetária formando o tampão plaquetário primário",
-            "Cascata de coagulação enzimática culminando na formação de trombina ativa",
-            "Conversão de fibrinogênio solúvel em rede insolúvel de fibrina que consolida o coágulo definitivo"
-          ],
           "explanation": "A resposta hemostática obedece à ordem: lesão -> espasmo vascular inicial -> tampão plaquetário primário -> cascata de coagulação -> formação de rede insolúvel de fibrina.",
           "whyWrong": [
             "Alternativa correta com a cronologia biológica exata das fases hemostáticas.",
